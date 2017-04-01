@@ -6,7 +6,7 @@
  * Time: 下午2:38
  */
 require_once __DIR__ . './../vendor/autoload.php';
-require_once __DIR__ . './Tools.php';
+require_once __DIR__ . '/Tools.php';
 
 use Hanson\Vbot\Foundation\Vbot;
 use Hanson\Vbot\Message\Entity\Text;
