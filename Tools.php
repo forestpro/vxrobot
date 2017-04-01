@@ -5,8 +5,7 @@
  * Date: 17/4/1
  * Time: 下午2:37
  */
-namespace Hanson\Vbot\Core;
-use Hanson\Vbot\Support\Console;
+
 class Tools
 {
     /**
@@ -29,11 +28,11 @@ class Tools
             if($robotName !== $nickname )
             {
                 $members[] = contact()->getUsernameByNickname($nickname);
-                Console::log('昵称:'.$nickname);
+               // Console::log('昵称:'.$nickname);
             }
         }
 
-        Console::log('$members:'.json_encode($members));
+        //Console::log('$members:'.json_encode($members));
 
         return $members;
     }
