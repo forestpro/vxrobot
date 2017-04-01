@@ -170,4 +170,6 @@ $robot->server->setExceptionHandler(function () {
     \Hanson\Vbot\Support\Console::log('异常退出');
 });
 
+Console::log('启动中,请稍等...');
+
 $robot->server->run();
