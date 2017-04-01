@@ -10,7 +10,7 @@ require_once __DIR__ . './../vendor/autoload.php';
 use Hanson\Vbot\Foundation\Vbot;
 use Hanson\Vbot\Message\Entity\Text;
 use Hanson\Vbot\Support\Console;
-use Vboot\Core\Tools;
+use Hanson\Vbot\Core\Tools;
 
 
 $path = __DIR__ . '/./../tmp/';

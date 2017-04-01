@@ -5,7 +5,7 @@
  * Date: 17/4/1
  * Time: 下午2:37
  */
-namespace Vboot\Core;
+namespace Hanson\Vbot\Core;
 use Hanson\Vbot\Support\Console;
 class Tools
 {
