@@ -38,6 +38,22 @@ class Tools
     }
 
     /**
+     *
+     * @param $content
+     * @return mixed|string
+     */
+    public static function groupSearch($content)
+    {
+        $content = str_replace('：', ':', $content);
+        $content = str_replace('，', ',', $content);
+
+        $cmdIndex = strpos( $content,":");
+        $content = substr($content,$cmdIndex+1);
+
+        return $content;
+    }
+
+    /**
      * 发post
      * @param $url
      * @param $data

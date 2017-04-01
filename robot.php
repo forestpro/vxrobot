@@ -149,6 +149,38 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
                     Console::log($result ? '踢人成功' : '踢人失败');
 
+                }else if(str_contains($message->content, '玩乐') || str_contains($message->content, '服务')){
+
+                    $serviceTitle = Tools::groupSearch($message->content);
+
+                    $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
+
+                    $result = Tools::sendPost($searchUrl,$searchParam);
+
+                    $resp = $result['response'];
+
+                    Console::log('res:'.$resp);
+
+                    if($result['code'] == 200)
+                    {
+
+                        $services = json_decode($resp);
+
+                        foreach($services->travelMasterService->rows as $service)
+                        {
+                            if($service->_score >= 1)
+                            {
+                                Console::log('title:'.$service->_source->title);
+
+                                Text::send($message->msg['FromUserName'],$service->_source->country.'.'.$service->_source->providerNickname.'('.$service->_source->title.")  http://mall.zuihuiyou.com/servicedescription/{$service->_source->providerId},{$service->_source->serviceId}");
+                            }
+                        }
+
+                    }else{
+                        Console::log('httpError:'.$result['code']);
+                    }
+
+
                 }else{
 
                     return reply($message->content);
