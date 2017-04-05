@@ -17,7 +17,7 @@ class mongodb{
 
         $bulk->insert(['x' => 1, 'name'=>'菜鸟教程', 'url' => 'http://www.runoob.com']);
 
-        $manager->executeBulkWrite('test', $bulk);
+        $manager->executeBulkWrite('xx', $bulk);
     }
 
 }
