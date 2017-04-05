@@ -9,12 +9,7 @@
 
 //$client = mongodb::getInstance();
 //$client->insert('test',array());
-$m = new MongoClient('mongodb://192.168.1.17:30000/user?slaveOk=false');
-
-$db = $m->user;
-
-$coll = $db->xx;
-
-$document = array( "title" => "Calvin and Hobbes", "author" => "Bill Watterson" );
-
-$coll->insert($document);
+$manager = new MongoDB\Driver\Manager('mongodb://zuihuiyou_user:zuihuiyou_2014@192.168.1.17:30000');
+$bulk = new MongoDB\Driver\BulkWrite;
+$bulk->insert(['x' => 1, 'name'=>'菜鸟教程', 'url' => 'http://www.runoob.com']);
+$manager->executeBulkWrite('user.xx', $bulk);
