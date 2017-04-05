@@ -7,4 +7,5 @@
  */
 require_once __DIR__ . '/mongodb.php';
 
-mongodb::insert('test',array());
+$client = mongodb::getInstance();
+$client->insert('test',array());

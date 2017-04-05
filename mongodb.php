@@ -8,17 +8,34 @@
 class mongodb
 {
 
-    public  static $mongoURl = 'mongodb://192.168.1.17:30000/user?slaveOk=false';
+    static $instance;
 
-    public static function insert($connName,$data)
+    protected $mongoURl = 'mongodb://192.168.1.17:30000/user?slaveOk=false';
+
+    protected $manager;
+
+    public function __construct()
     {
-        $manager = new MongoDB\Driver\Manager(mongoURl);
+        $manager = new MongoDB\Driver\Manager($this->mongoURl);
+    }
 
+
+    public static function getInstance()
+    {
+        if(!static::$instance){
+            static::$instance = new mongodb();
+        }
+
+        return static::$instance;
+    }
+
+    public  function insert($connName,$data)
+    {
         $bulk = new MongoDB\Driver\BulkWrite;
 
         $bulk->insert(['x' => 1, 'name'=>'菜鸟教程', 'url' => 'http://www.runoob.com']);
 
-        $manager->executeBulkWrite('xx', $bulk);
+        $this->manager->executeBulkWrite('xx', $bulk);
     }
 
 }
