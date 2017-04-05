@@ -12,7 +12,7 @@ class mongodb
 
     public static function insert($connName,$data)
     {
-        $manager = new MongoDB\Driver\Manager(mongodb::mongoURl);
+        $manager = new MongoDB\Driver\Manager(mongoURl);
 
         $bulk = new MongoDB\Driver\BulkWrite;
 
