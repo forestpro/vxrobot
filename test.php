@@ -9,8 +9,8 @@
 
 //$client = mongodb::getInstance();
 //$client->insert('test',array());
-$manager = new MongoDB\Driver\Manager('mongodb://192.168.1.17:30000');
-$manager->authenticate("zuihuiyou_user","zuihuiyou_2014");
+$manager = new MongoDB\Driver\Manager('mongodb://zuihuiyou_user:zuihuiyou_2014@192.168.1.17:30000');
+//$manager->authenticate("zuihuiyou_user","zuihuiyou_2014");
 $bulk = new MongoDB\Driver\BulkWrite;
 $bulk->insert(['x' => 1, 'name'=>'菜鸟教程', 'url' => 'http://www.runoob.com']);
 $manager->executeBulkWrite('user.xx', $bulk);
