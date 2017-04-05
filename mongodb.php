@@ -33,9 +33,9 @@ class mongodb
     {
         $bulk = new MongoDB\Driver\BulkWrite;
 
-        $bulk->insert(['x' => 1, 'name'=>'mmmmxxx', 'url' => 'http://www.runoob.com']);
+        $bulk->insert($data);
 
-        $this->manager->executeBulkWrite('user.xx', $bulk);
+        $this->manager->executeBulkWrite('user.'.$connName, $bulk);
     }
 
 }

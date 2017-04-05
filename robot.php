@@ -7,6 +7,7 @@
  */
 require_once __DIR__ . './../vendor/autoload.php';
 require_once __DIR__ . '/Tools.php';
+require_once __DIR__ . '/mongodb.php';
 
 use Hanson\Vbot\Foundation\Vbot;
 use Hanson\Vbot\Message\Entity\Text;
@@ -39,16 +40,22 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
     Console::log('message:'.json_encode($message));
 
 
+
+
     // 文字信息
     if ($message instanceof Text) {
         /** @var $message Text */
 
+        $client = mongodb::getInstance();
 
         // 联系人自动回复
         if ($message->fromType === 'Contact')
         {
             //Text::send($message->from['UserName'],"我是伯仁的小秘书，有什么可直拉说哦！");
             Console::log('msg:'.$message->from['NickName'].' content:'.$message->content);
+
+            $chat = ['MsgId'=>$message->msg->MsgId,'isAt'=>$message->isAt,'type'=>$message->fromType,'NickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+            $client->insert('wxchats',$chat);
 
             if(str_contains($message->content, '游侠')) //游侠: 茶茶
             {
@@ -127,6 +134,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         } elseif ($message->fromType === 'Group') {
 
             $sender = $message->sender["NickName"];
+
+            $chat = ['MsgId'=>$message->msg->MsgId,'isAt'=>$message->isAt,'type'=>$message->fromType,'groupName'=>$message->from['NickName'],'senderNickName'=>$message->sender['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+            $client->insert('wxchats',$chat);
 
             Console::log('group msg:'.$message->from['NickName'].'->'.$sender.' content:'.$message->content);
 
