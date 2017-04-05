@@ -10,7 +10,7 @@ class mongodb
 
     static $instance;
 
-    protected $mongoURl = 'mongodb://192.168.1.17:30000/user?slaveOk=false';
+    protected $mongoURl = 'mongodb://zuihuiyou_user:zuihuiyou_2014@192.168.1.17:30000/user?slaveOk=false';
 
     protected $manager;
 
@@ -33,7 +33,7 @@ class mongodb
     {
         $bulk = new MongoDB\Driver\BulkWrite;
 
-        $bulk->insert(['x' => 1, 'name'=>'菜鸟教程', 'url' => 'http://www.runoob.com']);
+        $bulk->insert(['x' => 1, 'name'=>'mmmmxxx', 'url' => 'http://www.runoob.com']);
 
         $this->manager->executeBulkWrite('xx', $bulk);
     }
