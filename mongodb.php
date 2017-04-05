@@ -35,7 +35,7 @@ class mongodb
 
         $bulk->insert(['x' => 1, 'name'=>'mmmmxxx', 'url' => 'http://www.runoob.com']);
 
-        $this->manager->executeBulkWrite('xx', $bulk);
+        $this->manager->executeBulkWrite('user.xx', $bulk);
     }
 
 }
