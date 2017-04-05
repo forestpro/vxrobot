@@ -16,7 +16,7 @@ class mongodb
 
     public function __construct()
     {
-        $manager = new MongoDB\Driver\Manager($this->mongoURl);
+        $this->manager = new MongoDB\Driver\Manager($this->mongoURl);
     }
 
 
