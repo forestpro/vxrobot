@@ -28,7 +28,7 @@ $searchUrl = 'http://api.zuihuiyou.cn/api/search/comprehensive';
 function reply($str)
 {
     return http()->post('http://www.tuling123.com/openapi/api', [
-        'key' => '541b9fdb86854f31b3d1b92f8845322b',//'1dce02aef026258eff69635a06b0ab7d',
+        'key' => '06ff1dd3fc264271bc95a85e629932d6',//'1dce02aef026258eff69635a06b0ab7d',
         'info' => $str
     ], true)['text'];
 
