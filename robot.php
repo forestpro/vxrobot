@@ -28,7 +28,7 @@ $searchUrl = 'http://api.zuihuiyou.cn/api/search/comprehensive';
 function reply($str)
 {
     return http()->post('http://www.tuling123.com/openapi/api', [
-        'key' => '1dce02aef026258eff69635a06b0ab7d',
+        'key' => '541b9fdb86854f31b3d1b92f8845322b',//'1dce02aef026258eff69635a06b0ab7d',
         'info' => $str
     ], true)['text'];
 
@@ -55,6 +55,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             Console::log('msg:'.$message->from['NickName'].' content:'.$message->content);
 
             $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'NickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+
             $client->insert('wxchats',$chat);
 
             if(str_contains($message->content, '游侠')) //游侠: 茶茶
@@ -191,7 +192,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                     }
 
 
-                }else{
+                }else{ //自动回复
 
                     return reply($message->content);
                     //发群消息
