@@ -27,10 +27,24 @@ $searchUrl = 'http://api.zuihuiyou.cn/api/search/comprehensive';
 // 图灵自动回复
 function reply($str)
 {
-    return http()->post('http://www.tuling123.com/openapi/api', [
+    /*return http()->post('http://www.tuling123.com/openapi/api', [
         'key' => '06ff1dd3fc264271bc95a85e629932d6',//'1dce02aef026258eff69635a06b0ab7d',
         'info' => $str
-    ], true)['text'];
+    ], true)['text'];*/
+
+    $reply_arr =  http()->post('http://www.tuling123.com/openapi/api', [
+        'key' => '06ff1dd3fc264271bc95a85e629932d6',
+        'info' => $str
+    ], true);
+
+    $result = $reply_arr['text'];
+
+    if(array_key_exists('url',$result))
+    {
+        $result = $result.' '.$reply_arr['url'];
+    }
+
+    return $result;
 
 }
 
