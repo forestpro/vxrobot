@@ -36,7 +36,7 @@ function reply($str)
         'key' => '06ff1dd3fc264271bc95a85e629932d6',
         'info' => $str
     ], true);
-    
+
     $result = $reply_arr['text'];
 
     if(array_key_exists('url',$reply_arr))
@@ -144,6 +144,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 }
 
 
+            }else{
+                
+                return reply($message->content);
             }
             // 群组@我回复
         } elseif ($message->fromType === 'Group') {
