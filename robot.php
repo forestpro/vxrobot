@@ -74,10 +74,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
             if(str_contains($message->content, '游侠')) //游侠: 茶茶
             {
-                $message->content = str_replace('：', ':', $message->content);
-                $cmds = explode(':', $message->content);
+               // $message->content = str_replace('：', ':', $message->content);
+               // $cmds = explode(':', $message->content);
                 //取得游侠昵称
-                $travelNick = trim($cmds[1]);
+                $travelNick = Tools::groupSearch($message->content);//trim($cmds[1]);
 
 
                 $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
@@ -110,10 +110,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
             }else  if(str_contains($message->content, '服务')){
 
-                $message->content = str_replace('：', ':', $message->content);
-                $cmds = explode(':', $message->content);
-                //取得游侠昵称
-                $serviceTitle = trim($cmds[1]);
+                //$message->content = str_replace('：', ':', $message->content);
+                //$cmds = explode(':', $message->content);
+                //取得服务标题
+                $serviceTitle = Tools::groupSearch($message->content);//trim($cmds[1]);
 
                 $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
 
@@ -145,7 +145,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
 
             }else{
-                
+
                 return reply($message->content);
             }
             // 群组@我回复
@@ -208,6 +208,39 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                         Console::log('httpError:'.$result['code']);
                     }
 
+
+                }if(str_contains($message->content, '游侠')) //游侠: 茶茶
+                {
+                    //取得游侠昵称
+                    $travelNick  = Tools::groupSearch($message->content);//trim($cmds[1]);
+
+                    $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
+
+                    $result = Tools::sendPost($searchUrl,$searchParam);
+
+                    $resp = $result['response'];
+
+                    Console::log('res:'.$resp);
+
+                    if($result['code'] == 200)
+                    {
+
+                        $travels = json_decode($resp);
+
+                        foreach($travels->travelMaster->rows as $travel)
+                        {
+                            if($travel->_score >= 1)
+                            {
+                                Console::log('travelName:'.$travel->_source->nickname);
+
+                                //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                Text::send($message->msg['FromUserName'],$travel->_source->country.'.'.$travel->_source->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                            }
+                        }
+
+                    }else{
+                        Console::log('httpError:'.$result['code']);
+                    }
 
                 }else{ //自动回复
 
