@@ -36,10 +36,10 @@ function reply($str)
         'key' => '06ff1dd3fc264271bc95a85e629932d6',
         'info' => $str
     ], true);
-
+    
     $result = $reply_arr['text'];
 
-    if(array_key_exists('url',$result))
+    if(array_key_exists('url',$reply_arr))
     {
         $result = $result.' '.$reply_arr['url'];
     }
