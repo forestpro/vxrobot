@@ -220,7 +220,18 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'toNickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
             $client->insert('wxchats',$chat);
         }
-    }
+
+    }else if ($message instanceof GroupChange) { // 群组变动
+
+            /** @var $message GroupChange */
+            if ($message->action === 'ADD') {
+                Console::log('新人进群');
+                return '欢迎新人 ' . $message->nickname;
+            } elseif ($message->action === 'REMOVE') {
+                Console::log('群主踢人了');
+                return $message->content;
+            }
+        }
 });
 
 
