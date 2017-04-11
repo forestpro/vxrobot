@@ -267,22 +267,20 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             }
     }
 
-    // 请求添加信息
-    if ($message instanceof RequestFriend) {
-        /** @var $message RequestFriend */
-
-        Console::log('有新好友0：'.$message->info['Content']);
+    // 请求添加信息(作者的列子失效)
+    /*if ($message instanceof RequestFriend) {
 
         $message->verifyUser($message::VIA);
-        /*if ($message->info['Content'] === '上山打老虎') {
+        if ($message->info['Content'] === '上山打老虎') {
             $message->verifyUser($message::VIA);
-        }*/
-    }
+        }
+    }*/
 
+    //请求添加信息
     if($message->fromType === 'Special' && $message->msg["FromUserName"]==='fmessage' && $message->msg["MsgType"] ===37)
     {
         Console::log('有新好友：'.$message->info['Content'].' via:'.$message::VIA);
-
+        //认证通过
         $message->verifyUser($message::VIA);
     }
 
