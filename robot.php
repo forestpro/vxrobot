@@ -267,7 +267,13 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 Console::log('群主踢人了');
                 return $message->content;
             }
-        }
+    }else if ($message instanceof RequestFriend) { // 请求添加信息
+        /** @var $message RequestFriend */
+        $message->verifyUser($message::VIA);
+        /*if ($message->info['Content'] === '上山打老虎') {
+            $message->verifyUser($message::VIA);
+        }*/
+    }
 });
 
 
