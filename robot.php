@@ -269,6 +269,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             }
     }else if ($message instanceof RequestFriend) { // 请求添加信息
         /** @var $message RequestFriend */
+
+        Console::log('有新好友：'.$message->info['Content']);
+
         $message->verifyUser($message::VIA);
         /*if ($message->info['Content'] === '上山打老虎') {
             $message->verifyUser($message::VIA);
