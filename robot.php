@@ -53,9 +53,6 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
     Console::log('message:'.json_encode($message));
 
-
-
-
     // 文字信息
     if ($message instanceof Text) {
         /** @var $message Text */
@@ -257,7 +254,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             $client->insert('wxchats',$chat);
         }
 
-    }else if ($message instanceof GroupChange) { // 群组变动
+    }
+    // 群组变动
+    if ($message instanceof GroupChange) {
 
             /** @var $message GroupChange */
             if ($message->action === 'ADD') {
@@ -267,7 +266,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 Console::log('群主踢人了');
                 return $message->content;
             }
-    }else if ($message instanceof RequestFriend) { // 请求添加信息
+    }
+
+    // 请求添加信息
+    if ($message instanceof RequestFriend) {
         /** @var $message RequestFriend */
 
         Console::log('有新好友：'.$message->info['Content']);
@@ -276,6 +278,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         /*if ($message->info['Content'] === '上山打老虎') {
             $message->verifyUser($message::VIA);
         }*/
+    }
+
+    // 新增好友
+    if ($message instanceof \Hanson\Vbot\Message\Entity\NewFriend) {
+       Console::log('新加好友：' . $message->from['NickName']);
     }
 });
 
