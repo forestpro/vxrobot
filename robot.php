@@ -52,7 +52,6 @@ function reply($str)
 $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$searchUrl) {
 
     Console::log('message:'.json_encode($message));
-
     // 文字信息
     if ($message instanceof Text) {
         /** @var $message Text */
@@ -272,7 +271,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
     if ($message instanceof RequestFriend) {
         /** @var $message RequestFriend */
 
-        Console::log('有新好友：'.$message->info['Content']);
+        Console::log('有新好友0：'.$message->info['Content']);
 
         $message->verifyUser($message::VIA);
         /*if ($message->info['Content'] === '上山打老虎') {
@@ -280,10 +279,19 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         }*/
     }
 
+    if($message->fromType === 'Special' && $message->msg["FromUserName"]==='fmessage' && $message->msg["MsgType"] ===37)
+    {
+        Console::log('有新好友：'.$message->info['Content'].' via:'.$message::VIA);
+
+        $message->verifyUser($message::VIA);
+    }
+
     // 新增好友
     if ($message instanceof \Hanson\Vbot\Message\Entity\NewFriend) {
        Console::log('新加好友：' . $message->from['NickName']);
     }
+
+
 });
 
 
