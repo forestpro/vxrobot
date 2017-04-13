@@ -52,243 +52,250 @@ function reply($str)
 $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$searchUrl) {
 
     Console::log('message:'.json_encode($message));
-    // 文字信息
-    if ($message instanceof Text) {
-        /** @var $message Text */
 
-        $client = mongodb::getInstance();
-
-        // 联系人自动回复
-        if ($message->fromType === 'Contact')
-        {
-            //Text::send($message->from['UserName'],"我是伯仁的小秘书，有什么可直拉说哦！");
-            Console::log('msg:'.$message->from['NickName'].' content:'.$message->content);
-
-            $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'NickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
-
-            $client->insert('wxchats',$chat);
-
-            if(str_contains($message->content, '游侠')) //游侠: 茶茶
-            {
-               // $message->content = str_replace('：', ':', $message->content);
-               // $cmds = explode(':', $message->content);
-                //取得游侠昵称
-                $travelNick = Tools::groupSearch($message->content);//trim($cmds[1]);
-
-
-                $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
-
-                $result = Tools::sendPost($searchUrl,$searchParam);
-
-                $resp = $result['response'];
-
-                Console::log('res:'.$resp);
-
-                if($result['code'] == 200)
-                {
-
-                    $travels = json_decode($resp);
-
-                    foreach($travels->travelMaster->rows as $travel)
-                    {
-                        if($travel->_score >= 1)
-                        {
-                            Console::log('travelName:'.$travel->_source->nickname);
-
-                            //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
-                            Text::send($message->from['UserName'],$travel->_source->country.'.'.$travel->_source->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
-                        }
-                    }
-
-                }else{
-                    Console::log('httpError:'.$result['code']);
-                }
-
-            }else  if(str_contains($message->content, '服务')){
-
-                //$message->content = str_replace('：', ':', $message->content);
-                //$cmds = explode(':', $message->content);
-                //取得服务标题
-                $serviceTitle = Tools::groupSearch($message->content);//trim($cmds[1]);
-
-                $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
-
-                $result = Tools::sendPost($searchUrl,$searchParam);
-
-                $resp = $result['response'];
-
-                Console::log('res:'.$resp);
-
-                if($result['code'] == 200)
-                {
-
-                    $services = json_decode($resp);
-
-                    foreach($services->travelMasterService->rows as $service)
-                    {
-                        if($service->_score >= 1)
-                        {
-                            Console::log('title:'.$service->_source->title);
-
-                            //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
-                            Text::send($message->from['UserName'],$service->_source->country.'.'.$service->_source->providerNickname.'('.$service->_source->title.")  http://mall.zuihuiyou.com/servicedescription/{$service->_source->providerId},{$service->_source->serviceId}");
-                        }
-                    }
-
-                }else{
-                    Console::log('httpError:'.$result['code']);
-                }
-
-
-            }else{
-
-                return reply($message->content);
-            }
-            // 群组@我回复
-        } elseif ($message->fromType === 'Group') {
-
-            $sender = $message->sender["NickName"];
-
-            $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'groupName'=>$message->from['NickName'],'senderNickName'=>$message->sender['NickName'],'content'=>$message->content,'createTime'=>$message->time];
-            $client->insert('wxchats',$chat);
-
-            Console::log('group msg:'.$message->from['NickName'].'->'.$sender.' content:'.$message->content);
-
-            if ($message->isAt)
-            {
-
-                if(str_contains($message->content, '拉人'))
-                {
-                    $members = Tools::groupManager($message->content,$robotName);
-
-                    $result = group()->addMember($message->from['UserName'], $members);
-
-                    Console::log($result ? '拉人成功' : '拉人失败');
-
-                }else if(str_contains($message->content, '踢人'))
-                {
-                    $members = Tools::groupManager($message->content,$robotName);
-
-                    $result = group()->deleteMember($message->from['UserName'], $members);
-
-                    Console::log($result ? '踢人成功' : '踢人失败');
-
-                }else if(str_contains($message->content, '玩乐') || str_contains($message->content, '服务')){
-
-                    $serviceTitle = Tools::groupSearch($message->content);
-
-                    $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
-
-                    $result = Tools::sendPost($searchUrl,$searchParam);
-
-                    $resp = $result['response'];
-
-                    Console::log('res:'.$resp);
-
-                    if($result['code'] == 200)
-                    {
-
-                        $services = json_decode($resp);
-
-                        foreach($services->travelMasterService->rows as $service)
-                        {
-                            if($service->_score >= 1)
-                            {
-                                Console::log('title:'.$service->_source->title);
-
-                                Text::send($message->msg['FromUserName'],$service->_source->country.'.'.$service->_source->providerNickname.'('.$service->_source->title.")  http://mall.zuihuiyou.com/servicedescription/{$service->_source->providerId},{$service->_source->serviceId}");
-                            }
-                        }
-
-                    }else{
-                        Console::log('httpError:'.$result['code']);
-                    }
-
-
-                }if(str_contains($message->content, '游侠')) //游侠: 茶茶
-                {
-                    //取得游侠昵称
-                    $travelNick  = Tools::groupSearch($message->content);//trim($cmds[1]);
-
-                    $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
-
-                    $result = Tools::sendPost($searchUrl,$searchParam);
-
-                    $resp = $result['response'];
-
-                    Console::log('res:'.$resp);
-
-                    if($result['code'] == 200)
-                    {
-
-                        $travels = json_decode($resp);
-
-                        foreach($travels->travelMaster->rows as $travel)
-                        {
-                            if($travel->_score >= 1)
-                            {
-                                Console::log('travelName:'.$travel->_source->nickname);
-
-                                //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
-                                Text::send($message->msg['FromUserName'],$travel->_source->country.'.'.$travel->_source->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
-                            }
-                        }
-
-                    }else{
-                        Console::log('httpError:'.$result['code']);
-                    }
-
-                }else{ //自动回复
-
-                    return reply($message->content);
-                    //发群消息
-                    //Text::send($message->msg['FromUserName'],'@'.$sender.' 虽然还不能理解你说的话，但我觉得很有趣，你能再说一遍吗？[捂脸]');
-                }
-
-            }
-
-        }else if($message->fromType === 'Self') //我自已发出的消息
-        {
-            $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'toNickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
-            $client->insert('wxchats',$chat);
-        }
-
-    }
-    // 群组变动
-    if ($message instanceof GroupChange) {
-
-            /** @var $message GroupChange */
-            if ($message->action === 'ADD') {
-                Console::log('新人进群');
-                return '欢迎新人 ' . $message->nickname;
-            } elseif ($message->action === 'REMOVE') {
-                Console::log('群主踢人了');
-                return $message->content;
-            }
-    }
-
-    // 请求添加信息(作者的列子失效)
-    /*if ($message instanceof RequestFriend) {
-
-        $message->verifyUser($message::VIA);
-        if ($message->info['Content'] === '上山打老虎') {
-            $message->verifyUser($message::VIA);
-        }
-    }*/
-
-    //请求添加信息
-    if($message->fromType === 'Special' && $message->msg["FromUserName"]==='fmessage' && $message->msg["MsgType"] ===37)
+    if($message->fromType === 'Heartbeats')
     {
-        Console::log('有新好友：'.$message->info['Content'].' via:'.$message::VIA);
-        //认证通过
-        $message->verifyUser($message::VIA);
-    }
+        Console::log('心跳消息......');
 
-    // 新增好友
-    if ($message instanceof \Hanson\Vbot\Message\Entity\NewFriend) {
-       Console::log('新加好友：' . $message->from['NickName']);
-    }
+    }else{
 
+            // 文字信息
+            if ($message instanceof Text) {
+                /** @var $message Text */
+
+                $client = mongodb::getInstance();
+
+                // 联系人自动回复
+                if ($message->fromType === 'Contact')
+                {
+                    //Text::send($message->from['UserName'],"我是伯仁的小秘书，有什么可直拉说哦！");
+                    Console::log('msg:'.$message->from['NickName'].' content:'.$message->content);
+
+                    $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'NickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+
+                    $client->insert('wxchats',$chat);
+
+                    if(str_contains($message->content, '游侠')) //游侠: 茶茶
+                    {
+                       // $message->content = str_replace('：', ':', $message->content);
+                       // $cmds = explode(':', $message->content);
+                        //取得游侠昵称
+                        $travelNick = Tools::groupSearch($message->content);//trim($cmds[1]);
+
+
+                        $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
+
+                        $result = Tools::sendPost($searchUrl,$searchParam);
+
+                        $resp = $result['response'];
+
+                        Console::log('res:'.$resp);
+
+                        if($result['code'] == 200)
+                        {
+
+                            $travels = json_decode($resp);
+
+                            foreach($travels->travelMaster->rows as $travel)
+                            {
+                                if($travel->_score >= 1)
+                                {
+                                    Console::log('travelName:'.$travel->_source->nickname);
+
+                                    //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                    Text::send($message->from['UserName'],$travel->_source->country.'.'.$travel->_source->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                }
+                            }
+
+                        }else{
+                            Console::log('httpError:'.$result['code']);
+                        }
+
+                    }else  if(str_contains($message->content, '服务')){
+
+                        //$message->content = str_replace('：', ':', $message->content);
+                        //$cmds = explode(':', $message->content);
+                        //取得服务标题
+                        $serviceTitle = Tools::groupSearch($message->content);//trim($cmds[1]);
+
+                        $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
+
+                        $result = Tools::sendPost($searchUrl,$searchParam);
+
+                        $resp = $result['response'];
+
+                        Console::log('res:'.$resp);
+
+                        if($result['code'] == 200)
+                        {
+
+                            $services = json_decode($resp);
+
+                            foreach($services->travelMasterService->rows as $service)
+                            {
+                                if($service->_score >= 1)
+                                {
+                                    Console::log('title:'.$service->_source->title);
+
+                                    //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                    Text::send($message->from['UserName'],$service->_source->country.'.'.$service->_source->providerNickname.'('.$service->_source->title.")  http://mall.zuihuiyou.com/servicedescription/{$service->_source->providerId},{$service->_source->serviceId}");
+                                }
+                            }
+
+                        }else{
+                            Console::log('httpError:'.$result['code']);
+                        }
+
+
+                    }else{
+
+                        return reply($message->content);
+                    }
+                    // 群组@我回复
+                } elseif ($message->fromType === 'Group') {
+
+                    $sender = $message->sender["NickName"];
+
+                    $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'groupName'=>$message->from['NickName'],'senderNickName'=>$message->sender['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+                    $client->insert('wxchats',$chat);
+
+                    Console::log('group msg:'.$message->from['NickName'].'->'.$sender.' content:'.$message->content);
+
+                    if ($message->isAt)
+                    {
+
+                        if(str_contains($message->content, '拉人'))
+                        {
+                            $members = Tools::groupManager($message->content,$robotName);
+
+                            $result = group()->addMember($message->from['UserName'], $members);
+
+                            Console::log($result ? '拉人成功' : '拉人失败');
+
+                        }else if(str_contains($message->content, '踢人'))
+                        {
+                            $members = Tools::groupManager($message->content,$robotName);
+
+                            $result = group()->deleteMember($message->from['UserName'], $members);
+
+                            Console::log($result ? '踢人成功' : '踢人失败');
+
+                        }else if(str_contains($message->content, '玩乐') || str_contains($message->content, '服务')){
+
+                            $serviceTitle = Tools::groupSearch($message->content);
+
+                            $searchParam = array('keyWord'=>$serviceTitle,'types'=>array('travelMasterService'),'from'=>0,'size'=>5);
+
+                            $result = Tools::sendPost($searchUrl,$searchParam);
+
+                            $resp = $result['response'];
+
+                            Console::log('res:'.$resp);
+
+                            if($result['code'] == 200)
+                            {
+
+                                $services = json_decode($resp);
+
+                                foreach($services->travelMasterService->rows as $service)
+                                {
+                                    if($service->_score >= 1)
+                                    {
+                                        Console::log('title:'.$service->_source->title);
+
+                                        Text::send($message->msg['FromUserName'],$service->_source->country.'.'.$service->_source->providerNickname.'('.$service->_source->title.")  http://mall.zuihuiyou.com/servicedescription/{$service->_source->providerId},{$service->_source->serviceId}");
+                                    }
+                                }
+
+                            }else{
+                                Console::log('httpError:'.$result['code']);
+                            }
+
+
+                        }if(str_contains($message->content, '游侠')) //游侠: 茶茶
+                        {
+                            //取得游侠昵称
+                            $travelNick  = Tools::groupSearch($message->content);//trim($cmds[1]);
+
+                            $searchParam = array('keyWord'=>$travelNick,'types'=>array('travelMaster'),'from'=>0,'size'=>5);
+
+                            $result = Tools::sendPost($searchUrl,$searchParam);
+
+                            $resp = $result['response'];
+
+                            Console::log('res:'.$resp);
+
+                            if($result['code'] == 200)
+                            {
+
+                                $travels = json_decode($resp);
+
+                                foreach($travels->travelMaster->rows as $travel)
+                                {
+                                    if($travel->_score >= 1)
+                                    {
+                                        Console::log('travelName:'.$travel->_source->nickname);
+
+                                        //Text::send($message->from['UserName'],$travel->country.'.'.$travel->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                        Text::send($message->msg['FromUserName'],$travel->_source->country.'.'.$travel->_source->nickname."  http://mall.zuihuiyou.com/yx_homepage/".$travel->_id);
+                                    }
+                                }
+
+                            }else{
+                                Console::log('httpError:'.$result['code']);
+                            }
+
+                        }else{ //自动回复
+
+                            return reply($message->content);
+                            //发群消息
+                            //Text::send($message->msg['FromUserName'],'@'.$sender.' 虽然还不能理解你说的话，但我觉得很有趣，你能再说一遍吗？[捂脸]');
+                        }
+
+                    }
+
+                }else if($message->fromType === 'Self') //我自已发出的消息
+                {
+                    $chat = ['MsgId'=>$message->msg['MsgId'],'isAt'=>$message->isAt,'type'=>$message->fromType,'toNickName'=>$message->from['NickName'],'content'=>$message->content,'createTime'=>$message->time];
+                    $client->insert('wxchats',$chat);
+                }
+
+            }
+            // 群组变动
+            if ($message instanceof GroupChange) {
+
+                    /** @var $message GroupChange */
+                    if ($message->action === 'ADD') {
+                        Console::log('新人进群');
+                        return '欢迎新人 ' . $message->nickname;
+                    } elseif ($message->action === 'REMOVE') {
+                        Console::log('群主踢人了');
+                        return $message->content;
+                    }
+            }
+
+            // 请求添加信息(作者的列子失效)
+            /*if ($message instanceof RequestFriend) {
+
+                $message->verifyUser($message::VIA);
+                if ($message->info['Content'] === '上山打老虎') {
+                    $message->verifyUser($message::VIA);
+                }
+            }*/
+
+            //请求添加信息
+            if($message->fromType === 'Special' && $message->msg["FromUserName"]==='fmessage' && $message->msg["MsgType"] ===37)
+            {
+                Console::log('有新好友：'.$message->info['Content'].' via:'.$message::VIA);
+                //认证通过
+                $message->verifyUser($message::VIA);
+            }
+
+            // 新增好友
+            if ($message instanceof \Hanson\Vbot\Message\Entity\NewFriend) {
+               Console::log('新加好友：' . $message->from['NickName']);
+            }
+    }
 
 });
 
