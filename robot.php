@@ -56,9 +56,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
     if($message->fromType === 'Heartbeats')
     {
 
-        $groupUser = group()->getGroupsByNickname('机器人测试群');
-        Console::log('心跳消息:'+$groupUser);
-        
+        $groupUser = group()->getGroupsByNickname('最会游火山部队_苏州');
+        Console::log('心跳消息:'.$groupUser);
+
     }else{
 
             // 文字信息
