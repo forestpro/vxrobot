@@ -58,6 +58,8 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         //$groupUser = group()->getGroupsByNickname('最会游火山部队_苏州');
         $groupUser = group()->getGmap('最会游火山部队_苏州');
+
+        Text::send($groupUser,'打卡测试');
         Console::log(':'.$groupUser);
 
     }else{
