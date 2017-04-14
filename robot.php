@@ -55,12 +55,28 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
     if($message->fromType === 'Heartbeats')
     {
+        $date = date('H:s');
 
-        //$groupUser = group()->getGroupsByNickname('最会游火山部队_苏州');
-        $groupUser = group()->getGmap('最会游火山部队_苏州');
+        $content = '';
 
-        Text::send($groupUser,'打卡测试');
-        Console::log(':'.$groupUser);
+        if($date == '09:00')
+        {
+            $content = '大家上午好，妹子我这厢有礼了！';
+        }
+        if($date == '21:00')
+        {
+            $content = '大家上晚安，妹子我还要继续站岗！';
+        }
+
+        if($content == '')
+        {
+            $groupUser = group()->getGmap('最会游火山部队_苏州');
+            Text::send($groupUser,$content);
+
+        }
+
+        Console::log('now:'.$date);
+
 
     }else{
 
