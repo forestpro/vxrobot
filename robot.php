@@ -55,7 +55,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
     if($message->fromType === 'Heartbeats')
     {
-        $date = date('H:s');
+        $date = date('H:i');
 
         $content = '';
 
