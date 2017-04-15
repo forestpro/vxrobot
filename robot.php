@@ -68,11 +68,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             $content = '大家上晚安，妹子我还要继续站岗！';
         }
 
-        if($content == '')
+        if($content !== '')
         {
             $groupUser = group()->getGmap('最会游火山部队_苏州');
             Text::send($groupUser,$content);
-
         }
 
         Console::log('now:'.$date);
