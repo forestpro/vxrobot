@@ -59,11 +59,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         $content = '';
 
-        if($date == '10:40')
+        if($date == '16:50')
         {
             $content = '大家上午好，妹子我这厢有礼了！';
         }
-        if($date == '21:00')
+        if($date == '17:00')
         {
             $content = '大家上晚安，妹子我还要继续站岗！';
         }
