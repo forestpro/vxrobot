@@ -72,6 +72,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         {
             $groupUser = group()->getGmap('最会游火山部队_苏州');
             Text::send($groupUser,$content);
+            Console::log('打卡:'.$content);
         }
 
         Console::log('now:'.$date);
