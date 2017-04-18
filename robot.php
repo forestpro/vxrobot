@@ -83,7 +83,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         $client = mongodb::getInstance();
         $filter = ['sendTime'=>$date];
 
-        $suggests = $client->Query($filter,[]);
+        $suggests = $client->Query('suggest',$filter,[]);
 
         foreach($suggests as $suggest)
         {
