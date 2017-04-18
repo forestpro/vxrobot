@@ -87,9 +87,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         foreach($suggests as $suggest)
         {
-            $groupUser = group()->getGmap($suggest['groupName']);
-            Text::send($groupUser,$suggest['content']);
             Console::log('推荐:'.json_encode($suggest));
+            $groupUser = group()->getGmap($suggest->groupName);
+            Text::send($groupUser,$suggest->content);
+
         }
 
 
