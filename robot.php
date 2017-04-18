@@ -59,6 +59,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         $content = '';
 
+        //定时打卡
         if($date == '09:00')
         {
             $content = '大家上午好，妹子我这厢有礼了！';
@@ -76,6 +77,20 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         }
 
         Console::log('now:'.$date);
+
+        //定时推送服务
+
+        $client = mongodb::getInstance();
+        $filter = ['sendTime'=>$date];
+
+        $suggests = $client->Query($filter,[]);
+
+        foreach($suggests as $suggest)
+        {
+            $groupUser = group()->getGmap($suggest['groupName']);
+            Text::send($groupUser,$suggest['content']);
+            Console::log('推荐:'.json_encode($suggest));
+        }
 
 
     }else{
