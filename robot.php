@@ -93,6 +93,9 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             if($groupUser !== '')
             {
                 Text::send($groupUser,$suggest->content);
+
+            }else{
+                Console::log($suggest->groupName.' 群不存在！');
             }
 
 
