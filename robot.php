@@ -79,7 +79,6 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         Console::log('now:'.$date);
 
         //定时推送服务
-
         $client = mongodb::getInstance();
         $filter = ['sendTime'=>$date];
 
@@ -88,8 +87,14 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
         foreach($suggests as $suggest)
         {
             Console::log('推荐:'.json_encode($suggest));
+
             $groupUser = group()->getGmap($suggest->groupName);
-            Text::send($groupUser,$suggest->content);
+
+            if($groupUser !== '')
+            {
+                Text::send($groupUser,$suggest->content);
+            }
+
 
         }
 
