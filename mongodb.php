@@ -35,7 +35,7 @@ class mongodb
 
         $bulk->insert($data);
 
-        $this->manager->executeBulkWrite('user.'.$connName, $bulk);
+        $this->manager->executeBulkWrite('robot.'.$connName, $bulk);
     }
 
 }
