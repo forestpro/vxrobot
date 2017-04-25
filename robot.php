@@ -88,7 +88,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         $userinfo = group()->getMembersByNickname($username,'今生无悔');
 
-        Console::log('今生无悔: '.json_encode($userinfo));
+        $userinfo1 = group()->getMembersByNickname($username,'刘丽');
+
+        Console::log('今生无悔: '. $username .' ->'.json_encode($userinfo).' ->'.json_decode($userinfo1));
+
+
 
     }else{
 
