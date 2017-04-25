@@ -27,11 +27,6 @@ $searchUrl = 'http://api.zuihuiyou.cn/api/search/comprehensive';
 // 图灵自动回复
 function reply($str)
 {
-    /*return http()->post('http://www.tuling123.com/openapi/api', [
-        'key' => '06ff1dd3fc264271bc95a85e629932d6',//'1dce02aef026258eff69635a06b0ab7d',
-        'info' => $str
-    ], true)['text'];*/
-
     $reply_arr =  http()->post('http://www.tuling123.com/openapi/api', [
         'key' => '06ff1dd3fc264271bc95a85e629932d6',
         'info' => $str
@@ -57,35 +52,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
     {
         $date = date('H:i');
 
-        /* $content = '';
-
-         //定时打卡
-         if($date == '09:00')
-         {
-             $content = '早安啊亲们！大家都起床没？大家的小伙伴去哪儿微导游-美眉已经恭候多时啦，关于旅行的任何问题欢迎随时向我提问噢！昨天晚上没有哪位亲@我啊，昨晚睡觉好想梦到了呢！';
-         }
-
-         if($date == '09:01')
-         {
-             $content = 'Hello，我是去哪儿微导游-昊哥,给大家提供此次大家前往日本旅行帮助，此群为志同道合的旅友提供行程中交流的互动平台。大家如有目的地吃喝玩乐、门票交通等求推荐，或者任何行前准备、行中问题可以@去哪儿微导游-昊哥，我们会竭尽所能为您解答和推荐。';
-         }
-
-         if($date == '21:00')
-         {
-             $content = '大家晚安，妹妹工作了一天，现在要回窝休息了。非工作时间21：00-09：00之间各位亲有旅行问题可以互帮互助或者给妹妹留言️，紧急问题可以📞联系去哪儿24小时📞️热线10101234获得帮助，妹妹明天9：00会准时出窝和大家会和，不见不散~';
-         }
-
-         if($content !== '')
-         {
-             $groupUser = group()->getGmap('最会游火山部队_苏州');
-             Text::send($groupUser,$content);
-             Console::log('打卡:'.$content);
-         }*/
-
         Console::log('now:'.$date);
 
         //定时推送服务 和打卡
         $client = mongodb::getInstance();
+
         $filter = ['sendTime'=>$date];
 
         $autoMsgs = $client->Query('autoSendMessage',$filter,[]);
@@ -95,11 +66,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
             if($msg->type ==='suggest')
             {
                 Console::log('推荐:'.$msg->groupName.'->'.$msg->sendTime);
+
             }else if($msg->type ==='sign')
             {
                 Console::log('打卡:'.$msg->groupName.'->'.$msg->sendTime);
             }
-
 
             $groupUser = group()->getGmap($msg->groupName);
 
@@ -111,9 +82,13 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 Console::log($msg->groupName.' 群不存在！');
             }
 
-
         }
 
+        $username = group()->getGmap('土豪帮');
+
+        $userinfo = group()->getMembersByNickname($username,'今生无悔');
+
+        Console::log('今生无悔: '.json_encode($userinfo));
 
     }else{
 
@@ -171,8 +146,6 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
                     }else  if(str_contains($message->content, '服务')){
 
-                        //$message->content = str_replace('：', ':', $message->content);
-                        //$cmds = explode(':', $message->content);
                         //取得服务标题
                         $serviceTitle = Tools::groupSearch($message->content);//trim($cmds[1]);
 
