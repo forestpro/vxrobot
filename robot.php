@@ -84,15 +84,17 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         }
 
-        $username = group()->getGmap('土豪帮');
+        //$username = group()->getGmap('土豪帮');
 
-        $userinfo = group()->getMembersByNickname($username,'今生无悔');
+        //$userinfo = group()->getMembersByNickname($username,'今生无悔');
 
-        $userinfo1 = group()->getMembersByNickname($username,'刘丽');
+        //$userinfo1 = group()->getGroupsByNickname();
 
-        Console::log('今生无悔: '. $username .' ->'.json_encode($userinfo).' ->'.json_encode($userinfo1));
+        //Console::log('今生无悔: '. $username .' ->'.json_encode($userinfo).' ->'.json_encode($userinfo1));
 
+        $groupinfo =  $this->getObject("@@6071062b9c73e5850ab2df7c127979a8dcdd44075326dc156873f9a4c0c40d9a", 'UserName', false, false);
 
+        Console::log("group info:".json_encode($groupinfo));
 
     }else{
 
