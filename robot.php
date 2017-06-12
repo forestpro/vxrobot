@@ -98,7 +98,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
             Console::log(urldecode($key).' wt:'.$diff);
 
-            if($diff > 9 && $diff <11 ) //10分钟未回复
+            if($diff > 9 && $diff <20 ) //10分钟未回复
             {
                 Text::send('@a812c5ec43528f4b53e5c0cb586a04d134eecb39874015261e4c44f488447b40',urldecode($key).' 群已过去10分钟没人回复，请及时关注！');
 
