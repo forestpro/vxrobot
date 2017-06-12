@@ -8,6 +8,7 @@
 require_once __DIR__ . './../vendor/autoload.php';
 require_once __DIR__ . '/Tools.php';
 require_once __DIR__ . '/mongodb.php';
+require_once __DIR__ . '/redisClient.php';
 
 use Hanson\Vbot\Foundation\Vbot;
 use Hanson\Vbot\Message\Entity\Text;
@@ -84,17 +85,10 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         }
 
-        //$username = group()->getGmap('土豪帮');
 
-        //$userinfo = group()->getMembersByNickname($username,'今生无悔');
+        //$groupinfo =  group()->getObject("@@6071062b9c73e5850ab2df7c127979a8dcdd44075326dc156873f9a4c0c40d9a", 'UserName', false, false);
 
-        //$userinfo1 = group()->getGroupsByNickname();
-
-        //Console::log('今生无悔: '. $username .' ->'.json_encode($userinfo).' ->'.json_encode($userinfo1));
-
-        $groupinfo =  group()->getObject("@@6071062b9c73e5850ab2df7c127979a8dcdd44075326dc156873f9a4c0c40d9a", 'UserName', false, false);
-
-        Console::log("group info:".json_encode($groupinfo));
+        //Console::log("group info:".json_encode($groupinfo));
 
     }else{
 
@@ -103,6 +97,8 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 /** @var $message Text */
 
                 $client = mongodb::getInstance();
+
+
 
                 // 联系人自动回复
                 if ($message->fromType === 'Contact')
@@ -197,6 +193,15 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                     $client->insert('wxchats',$chat);
 
                     Console::log('group msg:'.$message->from['NickName'].'->'.$sender.' content:'.$message->content);
+
+
+                    //save redis
+
+                    $redis = redisClient::getInstance();
+
+                    $redis->hSet('chatList',urlencode($message->from['NickName']),$message->time);
+
+                    Console::log('group check:'.urlencode($message->from['NickName']).' val:'.date('Y-m-d H:i:s', $message->time));
 
                     if ($message->isAt)
                     {
