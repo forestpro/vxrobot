@@ -93,7 +93,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
         foreach($list as $key=>$value)
         {
-            $time  = new Date();
+            $time  = time();
             $diff =  ceil(($time-$value)/60);//分钟
 
             Console::log(urldecode($key).' wt:'.$diff);
