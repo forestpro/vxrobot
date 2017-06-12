@@ -80,15 +80,34 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 Text::send($groupUser,$msg->content);
 
             }else{
+
                 Console::log($msg->groupName.' 群不存在！');
             }
 
         }
 
+        //
+        $redis = redisClient::getInstance();
 
-        //$groupinfo =  group()->getObject("@@6071062b9c73e5850ab2df7c127979a8dcdd44075326dc156873f9a4c0c40d9a", 'UserName', false, false);
+        $list  = $redis->hGetAll('chatList');
 
-        //Console::log("group info:".json_encode($groupinfo));
+        foreach($list as $key=>$value)
+        {
+            $time  = new Date();
+            $diff =  ceil(($time-$value)/60);//分钟
+
+            if($diff > 9 && $diff <11 ) //10分钟未回复
+            {
+                Text::send('@a812c5ec43528f4b53e5c0cb586a04d134eecb39874015261e4c44f488447b40',urldecode($key).' 群已过去10分钟没人回复，请及时关注！');
+
+            }else if($diff > 12)
+            {
+                $redis->hDel('chatList',$key);
+            }
+
+        }
+
+
 
     }else{
 
@@ -97,7 +116,6 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                 /** @var $message Text */
 
                 $client = mongodb::getInstance();
-
 
 
                 // 联系人自动回复
@@ -195,13 +213,20 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
                     Console::log('group msg:'.$message->from['NickName'].'->'.$sender.' content:'.$message->content);
 
 
-                    //save redis
+                    //save redis  去哪儿微导游-
 
                     $redis = redisClient::getInstance();
 
-                    $redis->hSet('chatList',urlencode($message->from['NickName']),$message->time);
+                    if(!strpos($sender,'去哪儿微导游'))
+                    {
+                        $redis->hSet('chatList',urlencode($message->from['NickName']),$message->time);
 
-                    Console::log('group check:'.urlencode($message->from['NickName']).' val:'.date('Y-m-d H:i:s', $message->time));
+                        Console::log('group check:'.urlencode($message->from['NickName']).' val:'.date('Y-m-d H:i:s', $message->time).' time:'.$message->time);
+
+                    }else{ //销售回复
+                        $redis->hDel('chatList',urlencode($message->from['NickName']));
+                    }
+
 
                     if ($message->isAt)
                     {

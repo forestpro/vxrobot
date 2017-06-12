@@ -8,7 +8,7 @@
 
 class redisClient {
 
-    static $instance;
+    public $instance;
 
     public function __construct()
     {
@@ -21,12 +21,10 @@ class redisClient {
      */
     public static function getInstance()
     {
-        if(!static::$instance){
-            static::$instance = new Redis();
-            static::$instance->connect('127.0.0.1', '22100');
-        }
+        $instance = new Redis();
+        $instance->connect('127.0.0.1', '22100');
 
-        return static::$instance;
+        return $instance;
     }
 
 
