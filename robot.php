@@ -224,7 +224,11 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
                     $redis = redisClient::getInstance();
 
-                    if(!strpos($sender,'去哪儿微导游'))
+                    $flag  = strpos($sender,'去哪儿微导游');
+
+                    Console::log('find :'.$flag);
+
+                    if(!$flag)
                     {
                         $redis->hSet('chatList',urlencode($message->from['NickName']),$message->time);
 
