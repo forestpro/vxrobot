@@ -228,7 +228,7 @@ $robot->server->setMessageHandler(function ($message) use ($path,$robotName,$sea
 
                     Console::log('find :'.$flag);
 
-                    if(!$flag)
+                    if($flag !== 0)
                     {
                         $redis->hSet('chatList',urlencode($message->from['NickName']),$message->time);
 
